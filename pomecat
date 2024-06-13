@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ランダム文字並べ替え</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+        }
+        .characters {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .counter {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .message, .counter-message {
+            font-size: 2em;
+            color: green;
+            margin-top: 20px;
+        }
+        .highlight {
+            color: red;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .buttons button {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="counterMessage" class="counter-message"></div>
+        <div id="counter" class="counter">0／40320</div>
+        <div id="randomCharacters" class="characters"></div>
+        <div class="buttons">
+            <button id="shuffleButton" onclick="shuffleCharacters()">再シャッフル</button>
+            <button id="shuffle100Button" onclick="shuffleCharacters100()">100回シャッフル</button>
+        </div>
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        const characters = ["人", "反", "ポ", "メ", "ラ", "ニ", "ア", "ン"];
+        const targetString = "人反ポメラニアン";
+        let shuffleCount = 0;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function updateCounterMessage() {
+            let message = "";
+            if (shuffleCount <= 10000) {
+                message = `揃う確率は1/40320ですよ<span class="highlight">‼️</span>`;
+            } else if (shuffleCount <= 20160) {
+                message = `1万回超えた<span class="highlight">‼️👀</span>`;
+            } else if (shuffleCount <= 30000) {
+                message = `多分そろそろ<span class="highlight">‼️✌️</span>`;
+            } else if (shuffleCount <= 40320) {
+                message = `40320回シャッフル目前ですよ<span class="highlight">‼️‼️</span>`;
+            } else {
+                message = `確率的にはもう出ているのに<span class="highlight">…</span>`;
+            }
+            document.getElementById('counterMessage').innerHTML = message;
+        }
+
+        function shuffleCharacters() {
+            if (document.getElementById('shuffleButton').disabled) return;
+            shuffleCount++;
+            const shuffledCharacters = [...characters];
+            shuffleArray(shuffledCharacters);
+            const shuffledString = shuffledCharacters.join('');
+            document.getElementById('randomCharacters').innerText = shuffledString;
+            document.getElementById('counter').innerText = `${shuffleCount}／40320`;
+            updateCounterMessage();
+            
+            if (shuffledString === targetString) {
+                document.getElementById('shuffleButton').innerText = "成功！";
+                document.getElementById('shuffleButton').disabled = true;
+                document.getElementById('shuffle100Button').innerText = "成功！";
+                document.getElementById('shuffle100Button').disabled = true;
+                document.getElementById('message').innerHTML = `やったね<span class="highlight">‼‼</span>✌️✌️👀 世界中のポメラニアンも喜んでいます<span class="highlight">‼️‼️</span>`;
+            }
+        }
+
+        function shuffleCharacters100() {
+            for (let i = 0; i < 100; i++) {
+                shuffleCharacters();
+                if (document.getElementById('shuffleButton').disabled) break;
+            }
+        }
+
+        // 初回ロード時にシャッフルして表示
+        shuffleCharacters();
+    </script>
+</body>
+</html>
